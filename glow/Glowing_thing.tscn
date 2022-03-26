@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Shaders/Glowing.tres" type="Shader" id=3]
+
+[sub_resource type="SphereMesh" id=5]
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 3 )
+shader_param/base_color = Vector3( 6.897, 0.833, 0.912 )
+shader_param/fresnel_color = Vector3( 0.149, 0.141, 0.824 )
+shader_param/exponent = 4.0
+shader_param/intensity = 8.524
+
+[sub_resource type="ProceduralSky" id=8]
+sky_top_color = Color( 0.0705882, 0.211765, 0.839216, 1 )
+sky_curve = 0.122943
+sun_color = Color( 0, 0.294118, 0.980392, 1 )
+sun_energy = 1.29
+
+[sub_resource type="Environment" id=7]
+background_mode = 2
+background_sky = SubResource( 8 )
+ambient_light_color = Color( 0.909804, 0.917647, 0.823529, 1 )
+ambient_light_energy = 0.91
+fog_color = Color( 0.160784, 0.301961, 0.466667, 1 )
+fog_depth_end = 30.0
+ssao_intensity = 4.0
+glow_enabled = true
+glow_blend_mode = 0
+glow_high_quality = true
+
+[node name="Spatial" type="Spatial"]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0 )
+mesh = SubResource( 5 )
+skeleton = NodePath("")
+material/0 = SubResource( 6 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 7 )
