@@ -1,0 +1,301 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://environment/FPSCounter.gd" type="Script" id=1]
+[ext_resource path="res://environment/World.gd" type="Script" id=2]
+[ext_resource path="res://FPSf.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Materials/Orange_grid.tres" type="Material" id=4]
+[ext_resource path="res://Materials/Purple_grid.tres" type="Material" id=5]
+[ext_resource path="res://GridTextures/Dark/texture_01.png" type="Texture" id=6]
+[ext_resource path="res://environment/TCAM.gd" type="Script" id=7]
+[ext_resource path="res://Shaders/vs.tres" type="Shader" id=8]
+[ext_resource path="res://environment/Area.gd" type="Script" id=9]
+[ext_resource path="res://environment/Area2.gd" type="Script" id=10]
+[ext_resource path="res://environment/Viewport.gd" type="Script" id=11]
+
+[sub_resource type="ProceduralSky" id=8]
+sky_top_color = Color( 0.0705882, 0.211765, 0.839216, 1 )
+sky_curve = 0.122943
+sun_energy = 2.94
+
+[sub_resource type="Environment" id=7]
+background_mode = 2
+background_sky = SubResource( 8 )
+ambient_light_color = Color( 0.909804, 0.917647, 0.823529, 1 )
+ambient_light_energy = 1.36
+fog_color = Color( 0.160784, 0.301961, 0.466667, 1 )
+fog_depth_end = 30.0
+ssao_intensity = 4.0
+
+[sub_resource type="PlaneMesh" id=28]
+size = Vector2( 2, 3 )
+
+[sub_resource type="ViewportTexture" id=31]
+viewport_path = NodePath("World1/Gate/Viewport")
+
+[sub_resource type="ShaderMaterial" id=29]
+resource_local_to_scene = true
+shader = ExtResource( 8 )
+shader_param/tex_frg_5 = SubResource( 31 )
+
+[sub_resource type="BoxShape" id=30]
+extents = Vector3( 1, 0, 1 )
+
+[sub_resource type="SpatialMaterial" id=17]
+flags_world_triplanar = true
+albedo_texture = ExtResource( 6 )
+uv1_triplanar = true
+
+[sub_resource type="PlaneMesh" id=32]
+flip_faces = true
+size = Vector2( 2, 3 )
+
+[sub_resource type="ViewportTexture" id=36]
+viewport_path = NodePath("World2/Gate/Viewport")
+
+[sub_resource type="ShaderMaterial" id=34]
+resource_local_to_scene = true
+shader = ExtResource( 8 )
+shader_param/tex_frg_5 = SubResource( 36 )
+
+[sub_resource type="GDScript" id=35]
+script/source = "extends Camera
+
+onready var portal: = get_node(\"../../../../../World2\")
+onready var otherPortal: = get_node(\"../../../../../World1\")
+onready var player: = get_node(\"../../../../../Player/Head/Camera\")
+func _physics_process(delta):
+	var playerOffset:Vector3 = player.translation - otherPortal.translation
+	self.translation = (portal.translation - playerOffset) * -1
+	self.rotation_degrees = player.rotation_degrees
+	
+"
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="FPSCounter" type="Label" parent="."]
+margin_top = 4.0
+margin_right = 84.0
+margin_bottom = 35.0
+text = "FPS
+Cords
+Cam cords"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 7 )
+
+[node name="Sun" type="DirectionalLight" parent="WorldEnvironment"]
+transform = Transform( -0.999584, -0.0111092, 0.0266156, 0.0222956, 0.287748, 0.957447, -0.018295, 0.957642, -0.287381, 0, 187.19, -135.358 )
+layers = 262144
+light_color = Color( 1, 0.901961, 0.670588, 1 )
+light_energy = 1.734
+light_cull_mask = 4294443007
+shadow_enabled = true
+
+[node name="Player" parent="." groups=["player"] instance=ExtResource( 3 )]
+transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -7, 0, 0 )
+speed = 5
+gravity = 15.0
+
+[node name="FlashLight" parent="Player/Head/Camera" index="0"]
+visible = false
+
+[node name="World1" type="CSGCombiner" parent="."]
+use_collision = true
+
+[node name="Floor" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0 )
+width = 50.0
+depth = 40.0
+material = ExtResource( 5 )
+
+[node name="WallLeft" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -19 )
+width = 50.0
+height = 8.0
+material = ExtResource( 5 )
+
+[node name="WallRight" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 19 )
+width = 50.0
+height = 8.0
+material = ExtResource( 5 )
+
+[node name="WallBack" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 2, 0 )
+height = 10.0
+depth = 36.0
+material = ExtResource( 5 )
+
+[node name="WallForwd" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 0 )
+height = 10.0
+depth = 36.0
+material = ExtResource( 5 )
+
+[node name="Gate" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+height = 4.0
+depth = 4.0
+material = ExtResource( 5 )
+
+[node name="Substraction" type="CSGBox" parent="World1/Gate"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+operation = 2
+height = 4.0
+material = ExtResource( 5 )
+
+[node name="CamPlane" type="MeshInstance" parent="World1/Gate"]
+transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, -0.5, 0 )
+layers = 2
+mesh = SubResource( 28 )
+material/0 = SubResource( 29 )
+
+[node name="Area" type="Area" parent="World1/Gate/CamPlane"]
+transform = Transform( -4.37114e-08, 0, 1, -1.64203e-15, 1, 0, -1, -8.35187e-23, -4.37114e-08, 0, 0, 0 )
+script = ExtResource( 9 )
+
+[node name="CollisionShape" type="CollisionShape" parent="World1/Gate/CamPlane/Area"]
+transform = Transform( 1, -1.64203e-15, 0, -1.64203e-15, 1, 0, 0, 0, 1, 0, 4.9738e-14, 1.19209e-07 )
+shape = SubResource( 30 )
+
+[node name="Viewport" type="Viewport" parent="World1/Gate"]
+keep_3d_linear = true
+shadow_atlas_size = 1
+script = ExtResource( 11 )
+
+[node name="Cameras" type="Spatial" parent="World1/Gate/Viewport"]
+
+[node name="TCAM" type="Camera" parent="World1/Gate/Viewport/Cameras"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40 )
+cull_mask = 1048573
+projection = 2
+current = true
+fov = 75.0
+size = 0.1
+far = 135.1
+script = ExtResource( 7 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Box" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -5 )
+material = SubResource( 17 )
+
+[node name="Box2" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -5 )
+material = SubResource( 17 )
+
+[node name="Box3" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -13 )
+material = SubResource( 17 )
+
+[node name="Box4" type="CSGBox" parent="World1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 11 )
+material = SubResource( 17 )
+
+[node name="World2" type="CSGCombiner" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 48 )
+use_collision = true
+
+[node name="Floor" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0 )
+width = 50.0
+depth = 40.0
+material = ExtResource( 4 )
+
+[node name="WallLeft" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -19 )
+width = 50.0
+height = 8.0
+material = ExtResource( 4 )
+
+[node name="WallRight" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 19 )
+width = 50.0
+height = 8.0
+material = ExtResource( 4 )
+
+[node name="WallBack" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 2, 0 )
+height = 10.0
+depth = 36.0
+material = ExtResource( 4 )
+
+[node name="WallForwd" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2, 0 )
+height = 10.0
+depth = 36.0
+material = ExtResource( 4 )
+
+[node name="Gate" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+height = 4.0
+depth = 4.0
+material = ExtResource( 4 )
+
+[node name="Substraction" type="CSGBox" parent="World2/Gate"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+operation = 2
+height = 4.0
+material = ExtResource( 4 )
+
+[node name="CamPlane2" type="MeshInstance" parent="World2/Gate"]
+transform = Transform( -4.37114e-08, -1, 4.37114e-08, 0, -4.37114e-08, -1, 1, -4.37114e-08, 1.91069e-15, 0, -0.5, 0 )
+layers = 2
+mesh = SubResource( 32 )
+skeleton = NodePath("../../../World1/Gate")
+material/0 = SubResource( 34 )
+
+[node name="Area2" type="Area" parent="World2/Gate/CamPlane2"]
+transform = Transform( -4.37114e-08, 0, 1, -1.64203e-15, 1, 0, -1, -8.35187e-23, -4.37114e-08, 0, 0, 0 )
+script = ExtResource( 10 )
+
+[node name="CollisionShape" type="CollisionShape" parent="World2/Gate/CamPlane2/Area2"]
+transform = Transform( 1, -1.64203e-15, 0, -1.64203e-15, 1, 0, 0, 0, 1, 0, 4.9738e-14, 1.19209e-07 )
+shape = SubResource( 30 )
+
+[node name="Viewport" type="Viewport" parent="World2/Gate"]
+keep_3d_linear = true
+shadow_atlas_size = 1
+script = ExtResource( 11 )
+
+[node name="Cameras" type="Spatial" parent="World2/Gate/Viewport"]
+
+[node name="TCAM2" type="Camera" parent="World2/Gate/Viewport/Cameras"]
+cull_mask = 1048573
+projection = 2
+current = true
+fov = 75.0
+size = 0.1
+far = 135.1
+script = SubResource( 35 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Box5" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0 )
+material = SubResource( 17 )
+
+[node name="Box6" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 0 )
+material = SubResource( 17 )
+
+[node name="Box7" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -8 )
+material = SubResource( 17 )
+
+[node name="Box8" type="CSGBox" parent="World2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 16 )
+material = SubResource( 17 )
+
+[connection signal="body_entered" from="World1/Gate/CamPlane/Area" to="World1/Gate/CamPlane/Area" method="_on_Area_body_entered"]
+[connection signal="body_entered" from="World2/Gate/CamPlane2/Area2" to="World2/Gate/CamPlane2/Area2" method="_on_Area_body_entered"]
+
+[editable path="Player"]

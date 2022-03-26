@@ -1,0 +1,56 @@
+[gd_resource type="VisualShader" load_steps=4 format=2]
+
+[sub_resource type="VisualShaderNodeInput" id=29]
+input_name = "screen_uv"
+
+[sub_resource type="VisualShaderNodeInput" id=20]
+input_name = "screen_texture"
+
+[sub_resource type="VisualShaderNodeTexture" id=22]
+texture_type = 1
+
+[resource]
+code = "shader_type spatial;
+render_mode specular_schlick_ggx, unshaded;
+
+uniform sampler2D tex_frg_5 : hint_albedo;
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:10
+	vec3 n_out10p0 = vec3(SCREEN_UV, 0.0);
+
+// Input:3
+
+// Texture:5
+	vec4 tex_frg_5_read = texture(tex_frg_5, n_out10p0.xy);
+	vec3 n_out5p0 = tex_frg_5_read.rgb;
+	float n_out5p1 = tex_frg_5_read.a;
+
+// Output:0
+	ALBEDO = n_out5p0;
+	ALPHA = n_out5p1;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( -822.091, 0 )
+flags/unshaded = true
+nodes/fragment/0/position = Vector2( 520, -120 )
+nodes/fragment/3/node = SubResource( 20 )
+nodes/fragment/3/position = Vector2( -760, 140 )
+nodes/fragment/5/node = SubResource( 22 )
+nodes/fragment/5/position = Vector2( -480, 0 )
+nodes/fragment/10/node = SubResource( 29 )
+nodes/fragment/10/position = Vector2( -740, 80 )
+nodes/fragment/connections = PoolIntArray( 3, 0, 5, 2, 10, 0, 5, 0, 5, 0, 0, 0, 5, 1, 0, 1 )
