@@ -1,12 +1,10 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=20 format=2]
 
-[ext_resource path="res://environment/FPSCounter.gd" type="Script" id=1]
 [ext_resource path="res://environment/World.gd" type="Script" id=2]
 [ext_resource path="res://FPSf.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Materials/Orange_grid.tres" type="Material" id=4]
 [ext_resource path="res://Materials/Purple_grid.tres" type="Material" id=5]
 [ext_resource path="res://GridTextures/Dark/texture_01.png" type="Texture" id=6]
-[ext_resource path="res://environment/TCAM.gd" type="Script" id=7]
 [ext_resource path="res://Shaders/vs.tres" type="Shader" id=8]
 [ext_resource path="res://environment/Area.gd" type="Script" id=9]
 [ext_resource path="res://environment/Area2.gd" type="Script" id=10]
@@ -57,19 +55,6 @@ resource_local_to_scene = true
 shader = ExtResource( 8 )
 shader_param/tex_frg_5 = SubResource( 36 )
 
-[sub_resource type="GDScript" id=35]
-script/source = "extends Camera
-
-onready var portal: = get_node(\"../../../../../World2\")
-onready var otherPortal: = get_node(\"../../../../../World1\")
-onready var player: = get_node(\"../../../../../Player/Head/Camera\")
-func _physics_process(delta):
-	var playerOffset:Vector3 = player.translation - otherPortal.translation
-	self.translation = (portal.translation - playerOffset) * -1
-	self.rotation_degrees = player.rotation_degrees
-	
-"
-
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 2 )
 
@@ -80,7 +65,6 @@ margin_bottom = 35.0
 text = "FPS
 Cords
 Cam cords"
-script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -97,9 +81,12 @@ light_cull_mask = 4294443007
 shadow_enabled = true
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource( 3 )]
-transform = Transform( -4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -7, 0, 0 )
+transform = Transform( -0.870871, 0, 0.491512, 0, 1, 0, -0.491512, 0, -0.870871, -7, 0, 0 )
 speed = 5
 gravity = 15.0
+
+[node name="Camera" parent="Player/Head" index="0"]
+size = 0.1
 
 [node name="FlashLight" parent="Player/Head/Camera" index="0"]
 visible = false
@@ -175,10 +162,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40 )
 cull_mask = 1048573
 projection = 2
 current = true
-fov = 75.0
 size = 0.1
 far = 135.1
-script = ExtResource( 7 )
 __meta__ = {
 "_editor_description_": ""
 }
@@ -274,7 +259,6 @@ current = true
 fov = 75.0
 size = 0.1
 far = 135.1
-script = SubResource( 35 )
 __meta__ = {
 "_editor_description_": ""
 }
