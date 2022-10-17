@@ -3,10 +3,11 @@ extends KinematicBody
 export var speed = 7
 const ACCEL_DEFAULT = 7
 const ACCEL_AIR = 1
+
 onready var accel = ACCEL_DEFAULT
 export var gravity = 9.8
 export var jump = 5
-
+export var platform_jump_multiply = 15
 export var cam_accel = 40
 export var mouse_sense = 0.1
 var snap
@@ -88,3 +89,17 @@ func _physics_process(delta):
 	
 	
 	
+
+
+
+
+func _on_Area_body_entered(body):
+	if is_on_floor():
+		snap = -get_floor_normal()
+		accel = ACCEL_DEFAULT
+		gravity_vec = Vector3.ZERO
+	elif is_on_floor() == false && body.is_in_group("player"):
+		snap = Vector3.ZERO
+		gravity_vec = (Vector3.UP + Vector3.BACK) * platform_jump_multiply
+		move_and_slide_with_snap(movement, snap, Vector3.UP)
+

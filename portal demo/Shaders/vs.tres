@@ -11,7 +11,7 @@ texture_type = 1
 
 [resource]
 code = "shader_type spatial;
-render_mode specular_schlick_ggx, unshaded;
+render_mode specular_schlick_ggx, async_visible, unshaded;
 
 uniform sampler2D tex_frg_5 : hint_albedo;
 
