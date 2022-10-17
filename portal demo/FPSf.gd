@@ -96,6 +96,6 @@ func _physics_process(delta):
 func _on_Area_body_entered(body):
 	if is_on_floor() == false && body.is_in_group("player"):
 		snap = Vector3.ZERO
-		gravity_vec = (Vector3.UP) * platform_jump_multiply
+		gravity_vec = (Vector3.UP + Vector3.BACK) * platform_jump_multiply
 		move_and_slide_with_snap(movement, snap, Vector3.UP)
 
